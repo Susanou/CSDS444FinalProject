@@ -60,6 +60,17 @@ if __name__ == '__main__':
             else:
                 with open(args.filename+".enc", "wb") as f:
                     f.write(encrypt(key, plaintext))
+        else:
+            with open(args.filename, "rb") as f:
+                ciphertext = f.read()
+            with open(args.key, "rb") as f:
+                key = padding(f.read())
 
+            if args.output != None:
+                with open(args.output, "wb") as f:
+                    f.write(decrypt(key, ciphertext))
+            else:
+                with open(args.filename+".dec", "wb") as f:
+                    f.write(unpad(decrypt(key, ciphertext)))
     else:
         parser.print_help()
