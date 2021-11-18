@@ -69,7 +69,7 @@ if __name__ == '__main__':
                 with open(args.output, "wb") as f:
                     f.write(decrypt(key, ciphertext))
             else:
-                with open(args.filename+".dec", "wb") as f:
+                with open(".".join(args.filename.split('.')[:2]), "wb") as f:
                     f.write(unpad(decrypt(key, ciphertext)))
     else:
         parser.print_help()
