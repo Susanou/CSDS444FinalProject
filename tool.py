@@ -47,7 +47,6 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     if args.algo == "aes":
-        print(args)
         if args.encrypt:
             with open(args.filename, "rb") as f:
                 plaintext = padding(f.read())
