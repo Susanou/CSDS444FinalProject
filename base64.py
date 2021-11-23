@@ -48,10 +48,8 @@ def decrypt(encodedMessage):
             messageBin = '0'*(6-len(messageBin)) + messageBin
         decoded_bin += messageBin
     # make multiple of 8 for unicode printing
-    if len(decoded_bin) > 8:
-        decoded_bin = decoded_bin + '0' * (len(decoded_bin) % 8)
-    else:
-        decoded_bin = decoded_bin + '0' * (8 - len(decoded_bin))
+    while len(decoded_bin) % 8 != 0:
+        decoded_bin += '0'
     #print(decoded_bin)
     decoded_message = ''
     # create decoded message
