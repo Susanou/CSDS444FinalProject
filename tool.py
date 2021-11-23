@@ -6,6 +6,7 @@ import pathlib
 
 from aes import decrypt as aes_decrypt, encrypt as aes_encrypt
 from rsa import generate, encrypt as rsa_encrypt, decrypt as rsa_decrypt
+from caesarvig import caesar_encrypt, caesar_decrypt, vigenere_encrpt, vigenere_decrpt
 
 def padding(data):
     length = 16 - (len(data) % 16)
@@ -41,6 +42,25 @@ if __name__ == '__main__':
     parser_rsa.add_argument("filename", type=str, help="File containing the message to encrypt/decrypt")
     parser_rsa.add_argument("key", type=str, help="File containing the key used to encrypt/decrypt", nargs="?", default="private.pem")
     parser_rsa.add_argument("-o", "--output", type=str, help="Output file", nargs='?')
+
+    ## Caesar PARSER
+    parser_caesar = subparsers.add_parser("caesar", help="caesar help")
+    group_caesar = parser_caesar.add_mutually_exclusive_group(required=True)
+    group_caesar.add_argument("-e", "--encrypt", action="store_true")
+    group_caesar.add_argument("-d", "--decrypt", action="store_true")
+    parser_caesar.add_argument("filename", type=str, help="File containing the message to encrypt/decrypt")
+    parser_caesar.add_argument("key", type=str, help="File containing the key used to encrypt/decrypt")
+    parser_caesar.add_argument("-o", "--output", type=str, help="Output file", nargs='?')
+    
+    ## Vigenere PARSER
+    parser_vigenere = subparsers.add_parser("vigenere", help="vigenere help")
+    group_vigenere = parser_vigenere.add_mutually_exclusive_group(required=True)
+    group_vigenere.add_argument("-e", "--encrypt", action="store_true")
+    group_vigenere.add_argument("-d", "--decrypt", action="store_true")
+    parser_vigenere.add_argument("-c", "--create", action="store_true")
+    parser_vigenere.add_argument("filename", type=str, help="File containing the message to encrypt/decrypt")
+    parser_vigenere.add_argument("key", type=str, help="File containing the key used to encrypt/decrypt", nargs="?", default="private.pem")
+    parser_vigenere.add_argument("-o", "--output", type=str, help="Output file", nargs='?')
 
 
 
@@ -97,6 +117,58 @@ if __name__ == '__main__':
         else:
             parser.print_help()
 
+    elif args.algo == "caesar":
+        if args.encrypt:
+            with open(args.filename, "r") as f:
+                plaintext = f.read()
+            with open(args.key, "r") as f:
+                key = int(f.read())
+            if args.output != None:
+                with open(args.output, "w") as f:
+                    f.write(caesar_encrypt(plaintext, key))
+            else:
+                with open(args.filename+".enc", "w") as f:
+                    f.write(caesar_encrypt(plaintext, key))
+        elif args.decrypt:
+            with open(args.filename, "r") as f:
+                ciphertext = f.read()
+            with open(args.key, "r") as f:
+                key = int(f.read())
 
+            if args.output != None:
+                with open(args.output, "w") as f:
+                    f.write(caesar_decrypt(ciphertext, key))
+            else:
+                with open(".".join(args.filename.split('.')[:2]), "w") as f:
+                    f.write(caesar_decrypt(ciphertext, key))
+        else:
+            parser.print_help()
+
+    elif args.algo == "vigenere":
+        if args.encrypt:
+            with open(args.filename, "r") as f:
+                plaintext = f.read()
+            with open(args.key, "r") as f:
+                key = f.read()
+            if args.output != None:
+                with open(args.output, "w") as f:
+                    f.write(vigenere_encrpt(plaintext, key))
+            else:
+                with open(args.filename+".enc", "w") as f:
+                    f.write(vigenere_encrpt(plaintext, key))
+        elif args.decrypt:
+            with open(args.filename, "r") as f:
+                ciphertext = f.read()
+            with open(args.key, "r") as f:
+                key = f.read()
+
+            if args.output != None:
+                with open(args.output, "w") as f:
+                    f.write(vigenere_decrpt(ciphertext, key))
+            else:
+                with open(".".join(args.filename.split('.')[:2]), "w") as f:
+                    f.write(vigenere_decrpt(ciphertext, key))
+        else:
+            parser.print_help()    
     else:
         parser.print_help()
