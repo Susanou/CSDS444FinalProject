@@ -69,7 +69,7 @@ if __name__ == '__main__':
 
             if args.output != None:
                 with open(args.output, "wb") as f:
-                    f.write(aes_decrypt(key, ciphertext))
+                    f.write(unpad(aes_decrypt(key, ciphertext)))
             else:
                 with open(".".join(args.filename.split('.')[:2]), "wb") as f:
                     f.write(unpad(aes_decrypt(key, ciphertext)))
