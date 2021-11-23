@@ -66,7 +66,7 @@ def vigenere_encrpt(string, key):
     else:
         for i in range(len(string) - len(key)):
             key.append(key[i % len(key)])
-    print (key)
+    #print (key)
     for i in range(len(string)):
         if string[i] == " ":
             cipher_text.append(" ")
