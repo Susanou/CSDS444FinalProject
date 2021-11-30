@@ -131,5 +131,7 @@ dmypy.json
 # test data
 smile1-bifid.png.enc
 smile1-bifid-decrypted.png
+smile1-affine.png.enc
+smile1-affine-decrypted.png
 bifid-odd.txt.enc
 bifid-odd-decrypted.txt
