@@ -157,8 +157,12 @@ def bytes2matrix(text):
 def matrix2bytes(matrix):
     """ Converts a 4x4 matrix into a 16-byte array.  """
     return bytes(sum(matrix, []))
+
+def split_blocks(message, block_size=16, require_padding=True):
+        assert len(message) % block_size == 0 or not require_padding
+        return [message[i:i+16] for i in range(0, len(message), block_size)]
     
-def encrypt(key, plaintext):
+def encrypt_block(key, plaintext):
     round_keys = expand_key(key)
 
     state = bytes2matrix(plaintext)
@@ -179,7 +183,7 @@ def encrypt(key, plaintext):
     ciphertext = matrix2bytes(c)
     return ciphertext
 
-def decrypt(key, ciphertext):
+def decrypt_block(key, ciphertext):
     # Remember to start from the last round key and work backwards through them when decrypting
     round_keys = expand_key(key)
 
@@ -205,3 +209,19 @@ def decrypt(key, ciphertext):
     plaintext = matrix2bytes(c)
 
     return plaintext
+
+def encrypt(key, plaintext):
+    blocks = []
+
+    for plain_block in split_blocks(plaintext):
+        blocks.append(encrypt_block(key, plain_block))
+    
+    return b''.join(blocks)
+
+def decrypt(key, ciphertext):
+    blocks = []
+
+    for cipher_block in split_blocks(ciphertext):
+        blocks.append(decrypt_block(key, cipher_block))
+    
+    return b''.join(blocks)
