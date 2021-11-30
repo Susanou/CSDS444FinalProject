@@ -127,3 +127,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# test data
+smile1-bifid.png.enc
+smile1-bifid-decrypted.png
+bifid-odd.txt.enc
+bifid-odd-decrypted.txt
