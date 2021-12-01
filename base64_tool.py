@@ -58,5 +58,5 @@ def decrypt(encodedMessage):
 
     return decoded_message
 
-print(encrypt('MessageToBeEncoded'))
-print(decrypt('TWVzc2FnZVRvQmVFbmNvZGVk'))
+#print(encrypt('MessageToBeEncoded'))
+#print(decrypt('TWVzc2FnZVRvQmVFbmNvZGVk'))
