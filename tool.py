@@ -7,6 +7,7 @@ import pathlib
 from aes import decrypt as aes_decrypt, encrypt as aes_encrypt
 from rsa import generate, encrypt as rsa_encrypt, decrypt as rsa_decrypt
 from caesarvig import caesar_encrypt, caesar_decrypt, vigenere_encrpt, vigenere_decrpt
+from bifid import decrypt as bifid_decrypt, encrypt as bifid_encrypt, load_key as bifid_load_key
 
 def padding(data):
     length = 16 - (len(data) % 16)
@@ -62,6 +63,14 @@ if __name__ == '__main__':
     parser_vigenere.add_argument("key", type=str, help="File containing the key used to encrypt/decrypt", nargs="?", default="private.pem")
     parser_vigenere.add_argument("-o", "--output", type=str, help="Output file", nargs='?')
 
+    ## BIFID PARSER
+    parser_bifid = subparsers.add_parser("bifid", help="bifid help")
+    group_bifid = parser_bifid.add_mutually_exclusive_group(required=True)
+    group_bifid.add_argument("-e", "--encrypt", action="store_true")
+    group_bifid.add_argument("-d", "--decrypt", action="store_true")
+    parser_bifid.add_argument("filename", type=str, help="File containing the message to encrypt/decrypt")
+    parser_bifid.add_argument("key", type=str, help="File containing the key used to encrypt/decrypt")
+    parser_bifid.add_argument("-o", "--output", type=str, help="Output file", nargs='?')
 
 
 
@@ -170,5 +179,32 @@ if __name__ == '__main__':
                     f.write(vigenere_decrpt(ciphertext, key))
         else:
             parser.print_help()    
+
+    elif args.algo == "bifid":
+        if args.encrypt:
+            with open(args.filename, "rb") as f:
+                plaintext = f.read()
+            with open(args.key, "rb") as f:
+                key = bifid_load_key(f.read())
+            if args.output != None:
+                with open(args.output, "wb") as f:
+                    f.write(bifid_encrypt(plaintext, key))
+            else:
+                with open(args.filename+".enc", "wb") as f:
+                    f.write(bifid_encrypt(plaintext, key))
+        elif args.decrypt:
+            with open(args.filename, "rb") as f:
+                ciphertext = f.read()
+            with open(args.key, "rb") as f:
+                key = bifid_load_key(f.read())
+            if args.output != None:
+                with open(args.output, "wb") as f:
+                    f.write(bifid_decrypt(ciphertext, key))
+            else:
+                with open(".".join(args.filename.split('.')[:2]), "wb") as f:
+                    f.write(bifid_decrypt(ciphertext, key))
+        else:
+            parser.print_help()
+
     else:
         parser.print_help()
