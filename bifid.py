@@ -54,18 +54,17 @@ square=[
 def encrypt(plaintext):
     list1 = [];
     list2 = [];
-    encrypted = [];
+    encrypted = bytearray()
 
     for k in range(len(plaintext)):
         byte = plaintext[k]
 
         # take each byte, get i,j values,
         # and add to list1,list2 respectively
-        byte_as_int = int.from_bytes(byte, byteorder=sys.byteorder)
         count = 0;
         for i in range(16):
             for j in range(16):
-                if square[i][j] == byte_as_int:
+                if square[i][j] == byte:
                     list1.append(i)
                     list2.append(j)
                 count += 1
@@ -78,9 +77,9 @@ def encrypt(plaintext):
     # - pair list2)
     if len(list1) % 2 == 0:
         for i in range(0, len(list1) - 1, 2):
-            encrypted.append(bytes([square[list1[i]][list1[i+1]]]))
+            encrypted.append(square[list1[i]][list1[i+1]])
         for i in range(0, len(list2) - 1, 2):
-            encrypted.append(bytes([square[list2[i]][list2[i+1]]]))
+            encrypted.append(square[list2[i]][list2[i+1]])
 
     # handle odd number of bytes:
     # - pair list1 except last
@@ -88,17 +87,17 @@ def encrypt(plaintext):
     # - pair list2 except first
     else:
         for i in range(0, len(list1) - 2, 2):
-            encrypted.append(bytes([square[list1[i]][list1[i+1]]]))
-        encrypted.append(bytes([square[list1[len(list1)-1]][list2[0]]]))
+            encrypted.append(square[list1[i]][list1[i+1]])
+        encrypted.append(square[list1[len(list1)-1]][list2[0]])
         for i in range(1, len(list2) - 1, 2):
-            encrypted.append(bytes([square[list2[i]][list2[i+1]]]))
+            encrypted.append(square[list2[i]][list2[i+1]])
 
     return encrypted
 
 def decrypt(ciphertext):
     list1 = [];
     list2 = [];
-    decrypted = [];
+    decrypted = bytearray()
 
     for k in range(len(ciphertext)):
         # find i,j values from byte
@@ -106,7 +105,7 @@ def decrypt(ciphertext):
         j = 0
         for i2 in range(16):
             for j2 in range(16):
-                if square[i2][j2] == int.from_bytes(ciphertext[k], byteorder=sys.byteorder):
+                if square[i2][j2] == ciphertext[k]:
                     i = i2
                     j = j2
                     break;
@@ -140,6 +139,6 @@ def decrypt(ciphertext):
 
     # get byte value from i,j values stored in list1,list2 respectively
     for i in range(len(list1)):
-        decrypted.append(bytes([square[list1[i]][list2[i]]]))
+        decrypted.append(square[list1[i]][list2[i]])
 
     return decrypted
