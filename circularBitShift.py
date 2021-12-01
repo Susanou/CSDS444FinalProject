@@ -100,7 +100,7 @@ def decrypt(message, B, N):
 
     return decoded_message
 
-
+'''
 B = int(input('Choose block size: '))
 N = int(input('Choose shift amount: '))
 
@@ -115,4 +115,4 @@ elif choice == 'd' or choice == 'D':
     print('Message to be decoded:', mess)
     decoded_mess = decrypt(mess, B, N)
     print('Decoded Message:', decoded_mess)
-
+'''
