@@ -8,6 +8,7 @@ from aes import decrypt as aes_decrypt, encrypt as aes_encrypt
 from rsa import generate, encrypt as rsa_encrypt, decrypt as rsa_decrypt
 from caesarvig import caesar_encrypt, caesar_decrypt, vigenere_encrpt, vigenere_decrpt
 from bifid import decrypt as bifid_decrypt, encrypt as bifid_encrypt, load_key as bifid_load_key
+from affine import encrypt as affine_encrypt, decrypt as affine_decrypt, load_key as affine_load_key
 
 def padding(data):
     length = 16 - (len(data) % 16)
@@ -72,6 +73,14 @@ if __name__ == '__main__':
     parser_bifid.add_argument("key", type=str, help="File containing the key used to encrypt/decrypt")
     parser_bifid.add_argument("-o", "--output", type=str, help="Output file", nargs='?')
 
+    ## Affine PARSER
+    parser_affine = subparsers.add_parser("affine", help="affine help")
+    group_affine = parser_affine.add_mutually_exclusive_group(required=True)
+    group_affine.add_argument("-e", "--encrypt", action="store_true")
+    group_affine.add_argument("-d", "--decrypt", action="store_true")
+    parser_affine.add_argument("filename", type=str, help="File containing the message to encrypt/decrypt")
+    parser_affine.add_argument("key", type=str, help="File containing the key used to encrypt/decrypt")
+    parser_affine.add_argument("-o", "--output", type=str, help="Output file", nargs='?')
 
 
     # Parsing aguments
@@ -203,6 +212,32 @@ if __name__ == '__main__':
             else:
                 with open(".".join(args.filename.split('.')[:2]), "wb") as f:
                     f.write(bifid_decrypt(ciphertext, key))
+        else:
+            parser.print_help()
+
+    elif args.algo == "affine":
+        if args.encrypt:
+            with open(args.filename, "rb") as f:
+                plaintext = f.read()
+            with open(args.key, "rb") as f:
+                key = affine_load_key(f.read())
+            if args.output != None:
+                with open(args.output, "wb") as f:
+                    f.write(affine_encrypt(plaintext, key))
+            else:
+                with open(args.filename+".enc", "wb") as f:
+                    f.write(affine_encrypt(plaintext, key))
+        elif args.decrypt:
+            with open(args.filename, "rb") as f:
+                ciphertext = f.read()
+            with open(args.key, "rb") as f:
+                key = affine_load_key(f.read())
+            if args.output != None:
+                with open(args.output, "wb") as f:
+                    f.write(affine_decrypt(ciphertext, key))
+            else:
+                with open(".".join(args.filename.split('.')[:2]), "wb") as f:
+                    f.write(affine_decrypt(ciphertext, key))
         else:
             parser.print_help()
 
