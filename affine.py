@@ -4,14 +4,13 @@ import sys
 m = 256
 
 def encrypt(plaintext, a, b):
-    encrypted = [];
+    encrypted = bytearray()
 
     for k in range(len(plaintext)):
         byte = plaintext[k]
-        byte_as_int = int.from_bytes(byte, byteorder=sys.byteorder)
 
         # E(x) = (ax+b) mod m
-        encrypted.append(((a*byte_as_int+b)%m).to_bytes(1, byteorder=sys.byteorder))
+        encrypted.append((a*byte+b)%m)
     return encrypted
 
 def decrypt (ciphertext, a, b):
@@ -27,12 +26,11 @@ def decrypt (ciphertext, a, b):
             break
     #print(a_inv)
 
-    decrypted = [];
+    decrypted = bytearray()
 
     for k in range(len(ciphertext)):
         byte = ciphertext[k]
-        byte_as_int = int.from_bytes(byte, byteorder=sys.byteorder)
 
         # D(x) = a_inv*(x-b) mod m
-        decrypted.append(((a_inv*(byte_as_int-b))%m).to_bytes(1, byteorder=sys.byteorder))
+        decrypted.append((a_inv*(byte-b))%m)
     return decrypted
