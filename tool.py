@@ -72,7 +72,6 @@ if __name__ == '__main__':
     group_base64_tool.add_argument("-e", "--encrypt", action="store_true")
     group_base64_tool.add_argument("-d", "--decrypt", action="store_true")
     parser_base64_tool.add_argument("filename", type=str, help="File containing the message to encrypt/decrypt")
-    parser_base64_tool.add_argument("key", type=str, help="File containing the key used to encrypt/decrypt")
     parser_base64_tool.add_argument("-o", "--output", type=str, help="Output file", nargs='?')
     
     ## circularBitShift PARSER
@@ -81,7 +80,8 @@ if __name__ == '__main__':
     group_circularBitShift.add_argument("-e", "--encrypt", action="store_true")
     group_circularBitShift.add_argument("-d", "--decrypt", action="store_true")
     parser_circularBitShift.add_argument("filename", type=str, help="File containing the message to encrypt/decrypt")
-    parser_circularBitShift.add_argument("key", type=str, help="File containing the key used to encrypt/decrypt")
+    parser_circularBitShift.add_argument("block_size", type=int, help="Block size used for cipher")
+    parser_circularBitShift.add_argument("shift_amount", type=int, help="Bit shift amount. Can be positive or negative for left or right shift respectively")
     parser_circularBitShift.add_argument("-o", "--output", type=str, help="Output file", nargs='?')
 
     ## BIFID PARSER
@@ -215,10 +215,10 @@ if __name__ == '__main__':
                 key = f.read()
             if args.output != None:
                 with open(args.output, "w") as f:
-                    f.write(base64_tool_encrpt(plaintext, key))
+                    f.write(base64_tool_encrpt(plaintext))
             else:
                 with open(args.filename+".enc", "w") as f:
-                    f.write(base64_tool_encrpt(plaintext, key))
+                    f.write(base64_tool_encrpt(plaintext))
         elif args.decrypt:
             with open(args.filename, "r") as f:
                 ciphertext = f.read()
@@ -227,10 +227,10 @@ if __name__ == '__main__':
 
             if args.output != None:
                 with open(args.output, "w") as f:
-                    f.write(base64_tool_decrpt(ciphertext, key))
+                    f.write(base64_tool_decrpt(ciphertext))
             else:
                 with open(".".join(args.filename.split('.')[:2]), "w") as f:
-                    f.write(base64_tool_decrpt(ciphertext, key))       
+                    f.write(base64_tool_decrpt(ciphertext))       
                     
     elif args.algo == "circularBitShift":
         if args.encrypt:
@@ -240,10 +240,10 @@ if __name__ == '__main__':
                 key = f.read()
             if args.output != None:
                 with open(args.output, "w") as f:
-                    f.write(circularBitShift_encrpt(plaintext, key))
+                    f.write(circularBitShift_encrpt(plaintext, block_size, shift_amount))
             else:
                 with open(args.filename+".enc", "w") as f:
-                    f.write(circularBitShift_encrpt(plaintext, key))
+                    f.write(circularBitShift_encrpt(plaintext, block_size, shift_amount))
         elif args.decrypt:
             with open(args.filename, "r") as f:
                 ciphertext = f.read()
@@ -252,10 +252,10 @@ if __name__ == '__main__':
 
             if args.output != None:
                 with open(args.output, "w") as f:
-                    f.write(circularBitShift_decrpt(ciphertext, key))
+                    f.write(circularBitShift_decrpt(ciphertext, block_size, shift_amount))
             else:
                 with open(".".join(args.filename.split('.')[:2]), "w") as f:
-                    f.write(circularBitShift_decrpt(ciphertext, key))   
+                    f.write(circularBitShift_decrpt(ciphertext, block_size, shift_amount))   
                     
         else:
             parser.print_help()    
