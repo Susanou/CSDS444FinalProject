@@ -7,6 +7,8 @@ import pathlib
 from aes import decrypt as aes_decrypt, encrypt as aes_encrypt
 from rsa import generate, encrypt as rsa_encrypt, decrypt as rsa_decrypt
 from caesarvig import caesar_encrypt, caesar_decrypt, vigenere_encrpt, vigenere_decrpt
+from base64_tool import decrypt as base64_tool_decrypt, encrypt as base64_tool_encrypt
+from circularBitShift import decrypt as circularBitShift_decrypt, encrypt as circularBitShift_encrypt
 
 def padding(data):
     length = 16 - (len(data) % 16)
@@ -61,8 +63,26 @@ if __name__ == '__main__':
     parser_vigenere.add_argument("filename", type=str, help="File containing the message to encrypt/decrypt")
     parser_vigenere.add_argument("key", type=str, help="File containing the key used to encrypt/decrypt", nargs="?", default="private.pem")
     parser_vigenere.add_argument("-o", "--output", type=str, help="Output file", nargs='?')
-
-
+    
+    ## base64 PARSER
+    parser_base64_tool = subparsers.add_parser("base64_tool", help="base64 help")
+    group_base64_tool = parser_base64_tool.add_mutually_exclusive_group(required=True)
+    group_base64_tool.add_argument("-e", "--encrypt", action="store_true")
+    group_base64_tool.add_argument("-d", "--decrypt", action="store_true")
+    parser_base64_tool.add_argument("filename", type=str, help="File containing the message to encrypt/decrypt")
+    parser_base64_tool.add_argument("key", type=str, help="File containing the key used to encrypt/decrypt")
+    parser_base64_tool.add_argument("-o", "--output", type=str, help="Output file", nargs='?')
+    
+    ## circularBitShift PARSER
+    parser_circularBitShift = subparsers.add_parser("circularBitShift", help="base64 help")
+    group_circularBitShift = parser_circularBitShift.add_mutually_exclusive_group(required=True)
+    group_circularBitShift.add_argument("-e", "--encrypt", action="store_true")
+    group_circularBitShift.add_argument("-d", "--decrypt", action="store_true")
+    parser_circularBitShift.add_argument("filename", type=str, help="File containing the message to encrypt/decrypt")
+    parser_circularBitShift.add_argument("key", type=str, help="File containing the key used to encrypt/decrypt")
+    parser_circularBitShift.add_argument("-o", "--output", type=str, help="Output file", nargs='?')
+    
+    
 
 
     # Parsing aguments
@@ -167,7 +187,58 @@ if __name__ == '__main__':
                     f.write(vigenere_decrpt(ciphertext, key))
             else:
                 with open(".".join(args.filename.split('.')[:2]), "w") as f:
-                    f.write(vigenere_decrpt(ciphertext, key))
+                    f.write(vigenere_decrpt(ciphertext, key))      
+                    
+    elif args.algo == "base64_tool":
+        if args.encrypt:
+            with open(args.filename, "r") as f:
+                plaintext = f.read()
+            with open(args.key, "r") as f:
+                key = f.read()
+            if args.output != None:
+                with open(args.output, "w") as f:
+                    f.write(base64_tool_encrpt(plaintext, key))
+            else:
+                with open(args.filename+".enc", "w") as f:
+                    f.write(base64_tool_encrpt(plaintext, key))
+        elif args.decrypt:
+            with open(args.filename, "r") as f:
+                ciphertext = f.read()
+            with open(args.key, "r") as f:
+                key = f.read()
+
+            if args.output != None:
+                with open(args.output, "w") as f:
+                    f.write(base64_tool_decrpt(ciphertext, key))
+            else:
+                with open(".".join(args.filename.split('.')[:2]), "w") as f:
+                    f.write(base64_tool_decrpt(ciphertext, key))       
+                    
+    elif args.algo == "circularBitShift":
+        if args.encrypt:
+            with open(args.filename, "r") as f:
+                plaintext = f.read()
+            with open(args.key, "r") as f:
+                key = f.read()
+            if args.output != None:
+                with open(args.output, "w") as f:
+                    f.write(circularBitShift_encrpt(plaintext, key))
+            else:
+                with open(args.filename+".enc", "w") as f:
+                    f.write(circularBitShift_encrpt(plaintext, key))
+        elif args.decrypt:
+            with open(args.filename, "r") as f:
+                ciphertext = f.read()
+            with open(args.key, "r") as f:
+                key = f.read()
+
+            if args.output != None:
+                with open(args.output, "w") as f:
+                    f.write(circularBitShift_decrpt(ciphertext, key))
+            else:
+                with open(".".join(args.filename.split('.')[:2]), "w") as f:
+                    f.write(circularBitShift_decrpt(ciphertext, key))   
+                    
         else:
             parser.print_help()    
     else:
