@@ -211,51 +211,54 @@ if __name__ == '__main__':
         if args.encrypt:
             with open(args.filename, "r") as f:
                 plaintext = f.read()
-            with open(args.key, "r") as f:
-                key = f.read()
+            #with open(args.key, "r") as f:
+                #key = f.read()
             if args.output != None:
                 with open(args.output, "w") as f:
-                    f.write(base64_tool_encrpt(plaintext))
+                    f.write(base64_tool_encrypt(plaintext))
             else:
                 with open(args.filename+".enc", "w") as f:
-                    f.write(base64_tool_encrpt(plaintext))
+                    f.write(base64_tool_encrypt(plaintext))
         elif args.decrypt:
             with open(args.filename, "r") as f:
                 ciphertext = f.read()
-            with open(args.key, "r") as f:
-                key = f.read()
+            #with open(args.key, "r") as f:
+                #key = f.read()
 
             if args.output != None:
                 with open(args.output, "w") as f:
-                    f.write(base64_tool_decrpt(ciphertext))
+                    f.write(base64_tool_decrypt(ciphertext))
             else:
                 with open(".".join(args.filename.split('.')[:2]), "w") as f:
-                    f.write(base64_tool_decrpt(ciphertext))       
+                    f.write(base64_tool_decrypt(ciphertext))       
                     
     elif args.algo == "circularBitShift":
         if args.encrypt:
             with open(args.filename, "r") as f:
                 plaintext = f.read()
-            with open(args.key, "r") as f:
-                key = f.read()
+            #with open(args.key, "r") as f:
+                #key = f.read()
+            block_size = args.block_size
+            shift_amount = args.shift_amount
             if args.output != None:
                 with open(args.output, "w") as f:
-                    f.write(circularBitShift_encrpt(plaintext, block_size, shift_amount))
+                    f.write(circularBitShift_encrypt(plaintext, block_size, shift_amount))
             else:
                 with open(args.filename+".enc", "w") as f:
-                    f.write(circularBitShift_encrpt(plaintext, block_size, shift_amount))
+                    f.write(circularBitShift_encrypt(plaintext, block_size, shift_amount))
         elif args.decrypt:
             with open(args.filename, "r") as f:
                 ciphertext = f.read()
-            with open(args.key, "r") as f:
-                key = f.read()
-
+            #with open(args.key, "r") as f:
+                #key = f.read()
+            block_size = args.block_size
+            shift_amount = args.shift_amount
             if args.output != None:
                 with open(args.output, "w") as f:
-                    f.write(circularBitShift_decrpt(ciphertext, block_size, shift_amount))
+                    f.write(circularBitShift_decrypt(ciphertext, block_size, shift_amount))
             else:
                 with open(".".join(args.filename.split('.')[:2]), "w") as f:
-                    f.write(circularBitShift_decrpt(ciphertext, block_size, shift_amount))   
+                    f.write(circularBitShift_decrypt(ciphertext, block_size, shift_amount))   
                     
         else:
             parser.print_help()    
