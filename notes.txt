@@ -1,0 +1,61 @@
+#
+# for bifid
+#
+
+# make new bifid key
+seq 0 255 | shuf | while read num; do
+  printf "$(printf '\\%03o' "$num")";
+done > bifid.key
+
+# hex dump original file
+xxd smile1.png
+
+# encrypt file using bifid
+python tool.py bifid -e smile1.png bifid.key -o smile1-bifid.png.enc
+
+# hex dump encrypted file
+xxd smile1-bifid.png.enc
+
+# decrypt file using bifid
+python tool.py bifid -d smile1-bifid.png.enc bifid.key -o smile1-bifid-decrypted.png
+
+# hex dump decrypted file
+xxd smile1-bifid-decrypted.png
+
+# compare decrypted bifid to original
+diff -s smile1.png smile1-bifid-decrypted.png
+
+
+#
+# for affine
+#
+
+# make new affine key
+printf "$(printf '\\%03o\\%03o' "$(
+  for a in $(seq 0 256); do
+    for x in $(seq 0 256); do
+      if [ "$(( (a*x)%256 ))" -eq 1 ]; then
+        echo "$a"
+        break
+      fi
+    done
+  done | shuf | head -n1
+)" "$((RANDOM % 256))")" > affine.key
+
+# hex dump original file
+xxd smile1.png
+
+# encrypt file using affine
+python tool.py affine -e smile1.png affine.key -o smile1-affine.png.enc
+
+# hex dump encrypted file
+xxd smile1-affine.png.enc
+
+# decrypt file using affine
+python tool.py affine -d smile1-affine.png.enc affine.key -o smile1-affine-decrypted.png
+
+# hex dump decrypted file
+xxd smile1-affine-decrypted.png
+
+# compare decrypted affine to original
+diff -s smile1.png smile1-affine-decrypted.png
